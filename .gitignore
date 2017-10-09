@@ -1,3 +1,10 @@
+# The executable
+stopwatch
+
+# Non-essential Code::Blocks files
+*.layout
+*.depend
+
 # Prerequisites
 *.d
 
