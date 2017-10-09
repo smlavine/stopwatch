@@ -32,7 +32,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Linker>
-			<Add library="EGL" />
+			<Add library="glfw" />
 			<Add library="GLESv2" />
 		</Linker>
 		<Unit filename="main.c">
