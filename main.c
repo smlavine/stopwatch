@@ -12,6 +12,9 @@ static struct {
     GLFWwindow *win;
     GLuint prg;
     GLint pos, scl, mov, scl2, mov2;
+    struct {
+        double x, y;
+    } anchor;
 } g;
 
 static void initGLFW(void);
@@ -21,6 +24,8 @@ static void exitGL(void);
 static void draw(void);
 static void getDigits(double t, int *H, int *h, int *M, int *m, int *S, int *s);
 static void drawObj(float mov, const float *v, size_t vc);
+static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+static void adjustWindowPosition(void);
 
 int main(void) {
     initGLFW();
@@ -28,6 +33,7 @@ int main(void) {
     while (!glfwWindowShouldClose(g.win)) {
         glfwWaitEventsTimeout(1);
         draw();
+        adjustWindowPosition();
         glfwSwapBuffers(g.win);
     }
     exitGL();
@@ -43,6 +49,8 @@ static void initGLFW(void) {
     g.win = glfwCreateWindow(WIN_W, WIN_H, "Stopwatch", NULL, NULL);
     glfwMakeContextCurrent(g.win);
     glfwSwapInterval(1);
+    glfwSetMouseButtonCallback(g.win, mouseButtonCallback);
+    g.anchor.x = g.anchor.y = 0;
 }
 
 static void exitGLFW(void) {
@@ -185,4 +193,23 @@ static void drawObj(float mov, const float *v, size_t vc) {
     glUniform2f(g.mov, mov * SCL, 0);
     glVertexAttribPointer(g.pos, 2, GL_FLOAT, GL_FALSE, 0, v);
     glDrawArrays(GL_TRIANGLES, 0, vc);
+}
+
+static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+        glfwSetWindowShouldClose(win, 1);
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        glfwGetCursorPos(win, &g.anchor.x, &g.anchor.y);
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) adjustWindowPosition;
+}
+
+void adjustWindowPosition(void) {
+    if (!glfwGetMouseButton(g.win, GLFW_MOUSE_BUTTON_LEFT)) return;
+    double x, y;
+    int xpos, ypos;
+    glfwGetCursorPos(g.win, &x, &y);
+    glfwGetWindowPos(g.win, &xpos, &ypos);
+    glfwSetWindowPos(g.win, xpos - g.anchor.x + x, ypos - g.anchor.y + y);
 }
