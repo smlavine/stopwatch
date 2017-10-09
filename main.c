@@ -1,14 +1,17 @@
 #define GLFW_INCLUDE_ES2
 #include <GLFW/glfw3.h>
 
+#define MIN_WIN_W 27
+#define MIN_WIN_H 5
+#define SCL 2
+#define WIN_W (MIN_WIN_W * SCL)
+#define WIN_H (MIN_WIN_H * SCL)
 #define VC(x) (sizeof(x) / sizeof(float[2])) // vertex count
-
-#include <stdio.h>
 
 static struct {
     GLFWwindow *win;
     GLuint prg;
-    GLint pos, scl, mov;
+    GLint pos, scl, mov, scl2, mov2;
 } g;
 
 static void initGLFW(void);
@@ -37,7 +40,7 @@ static void initGLFW(void) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_DECORATED, 0);
-    g.win = glfwCreateWindow(28, 100, "Stopwatch", NULL, NULL);
+    g.win = glfwCreateWindow(WIN_W, WIN_H, "Stopwatch", NULL, NULL);
     glfwMakeContextCurrent(g.win);
     glfwSwapInterval(1);
 }
@@ -51,9 +54,10 @@ static void initGL(void) {
     const char *VERT =
     "#version 100\n"
     "attribute vec2 pos;\n"
-    "uniform vec2 scl, mov;\n"
+    "uniform vec2 scl, mov, scl2, mov2;\n"
     "void main() {\n"
     "    vec2 p = pos * scl + mov;"
+    "    p = p * scl2 + mov2;\n"
     "    gl_Position = vec4(p,0,1);\n"
     "}\n";
     const char *FRAG =
@@ -67,12 +71,11 @@ static void initGL(void) {
     GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(vert, 1, &VERT, NULL);
     glShaderSource(frag, 1, &FRAG, NULL);
-    char info[1024];
-    glCompileShader(vert); glGetShaderInfoLog(vert, 1024, NULL, info); puts(info);
-    glCompileShader(frag); glGetShaderInfoLog(frag, 1024, NULL, info); puts(info);
+    glCompileShader(vert);
+    glCompileShader(frag);
     glAttachShader(g.prg, vert);
     glAttachShader(g.prg, frag);
-    glLinkProgram(g.prg); glGetProgramInfoLog(g.prg, 1024, NULL, info); puts(info);
+    glLinkProgram(g.prg);
     glDetachShader(g.prg, frag);
     glDetachShader(g.prg, vert);
     glDeleteShader(frag);
@@ -81,6 +84,9 @@ static void initGL(void) {
     g.pos = glGetAttribLocation(g.prg, "pos");
     g.scl = glGetUniformLocation(g.prg, "scl");
     g.mov = glGetUniformLocation(g.prg, "mov");
+    g.scl2 = glGetUniformLocation(g.prg, "scl2");
+    g.mov2 = glGetUniformLocation(g.prg, "mov2");
+    glViewport(0, 0, WIN_W, WIN_H);
 }
 
 static void exitGL(void) {
@@ -93,7 +99,9 @@ static void draw(void) {
                                  0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0,
                                  3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5,
                                  3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5};
-    static const float ONE[] = {1, 0, 2, 0, 2, 5, 2, 5, 1, 5, 1, 0};
+    static const float ONE[] = {1, 0, 2, 0, 2, 5, 2, 5, 1, 5, 1, 0,
+                                0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0,
+                                2, 5, 0, 5, 0, 4, 0, 4, 2, 4, 2, 5};
     static const float TWO[] = {0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0,
                                 0, 0, 1, 0, 1, 3, 1, 3, 0, 3, 0, 0,
                                 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5,
@@ -129,10 +137,8 @@ static void draw(void) {
                                  3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5,
                                  3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5,
                                  1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2};
-    static const float COLON[] = {0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0,
-                                 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0,
-                                 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5,
-                                 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5};
+    static const float COLON[] = {1, 3, 2, 3, 2, 4, 2, 4, 1, 4, 1, 3,
+                                  1, 1, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1};
     static const float *DIGITS[] = {
         ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE
     };
@@ -143,10 +149,18 @@ static void draw(void) {
     int H, h, M, m, S, s;
     getDigits(glfwGetTime(), &H, &h, &M, &m, &S, &s);
 
-    glUniform2f(g.scl, 1.0 / 3.0, 1.0 / 5.0);
+    glUniform2f(g.scl2, 2.0 / WIN_W, 2.0 / WIN_H);
+    glUniform2f(g.mov2, -1, -1);
     glEnableVertexAttribArray(g.pos);
     glClear(GL_COLOR_BUFFER_BIT);
-    drawObj(0, DIGITS[s], DIGIT_VERTEX_COUNT[s]);
+    drawObj(0, DIGITS[H], DIGIT_VERTEX_COUNT[H]);
+    drawObj(4, DIGITS[h], DIGIT_VERTEX_COUNT[h]);
+    drawObj(7, COLON, VC(COLON));
+    drawObj(10, DIGITS[M], DIGIT_VERTEX_COUNT[M]);
+    drawObj(14, DIGITS[m], DIGIT_VERTEX_COUNT[m]);
+    drawObj(17, COLON, VC(COLON));
+    drawObj(20, DIGITS[S], DIGIT_VERTEX_COUNT[S]);
+    drawObj(24, DIGITS[s], DIGIT_VERTEX_COUNT[s]);
     glDisableVertexAttribArray(g.pos);
 }
 
@@ -167,7 +181,8 @@ static void getDigits(double t, int *H, int *h, int *M, int *m, int *S, int *s) 
 }
 
 static void drawObj(float mov, const float *v, size_t vc) {
-    glUniform2f(g.mov, mov, 0);
+    glUniform2f(g.scl, SCL, SCL);
+    glUniform2f(g.mov, mov * SCL, 0);
     glVertexAttribPointer(g.pos, 2, GL_FLOAT, GL_FALSE, 0, v);
     glDrawArrays(GL_TRIANGLES, 0, vc);
 }
