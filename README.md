@@ -1,6 +1,6 @@
 # stopwatch
 
-![Screenshot][screenshot.png]
+![Screenshot](screenshot.png)
 
 Features:
 * Minimal size (can be as small as 27x5)
