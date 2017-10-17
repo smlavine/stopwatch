@@ -31,7 +31,7 @@ int main(void) {
     initGLFW();
     initGL();
     while (!glfwWindowShouldClose(g.win)) {
-        glfwWaitEventsTimeout(1);
+        glfwWaitEvents();
         draw();
         adjustWindowPosition();
         glfwSwapBuffers(g.win);
