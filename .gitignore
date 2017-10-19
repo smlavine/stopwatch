@@ -1,12 +1,15 @@
 # The executable
 stopwatch
 
-# Snap craft
+# Snapcraft
 parts/*
 prime/*
 stage/*
 snap/.snapcraft/*
 *.snap
+
+# Flatpak
+repo/*
 
 # Non-essential Code::Blocks files
 *.layout

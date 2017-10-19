@@ -9,10 +9,10 @@ grade: devel
 apps:
     stopwatch:
         command: stopwatch
-        plugs: [account-control, alsa, autopilot-introspection, avahi-control, avahi-observe, bluetooth-control, bluez, broadcom-asic-control, browser-support, camera, classic-support, core-support, cups-control, dcdbas-control, desktop, desktop-legacy, docker-support, firewall-control, framebuffer, fuse-support, greengrass-support, gsettings, hardware-observe, hardware-random-control, hardware-random-observe, home, io-ports-control, joystick, kernel-module-control, kubernetes-support, kvm, libvirt, locale-control, log-observe, lxd-support, modem-manager, mount-observe, netlink-audit, netlink-connector, network, network-bind, network-control, network-manager, network-observe, network-setup-control, network-setup-observe, ofono, opengl, openvswitch, openvswitch-support, optical-drive, password-manager-service, physical-memory-control, physical-memory-observe, ppp, process-control, pulseaudio, raw-usb, removable-media, screen-inhibit-control, shutdown, snapd-control, system-observe, system-trace, time-control, timeserver-control, timezone-control, tpm, uhid, unity7, upower-observe, wayland, x11]
+        plugs: [opengl, x11]
 parts:
     stopwatch:
         plugin: make
         source: .
         build-packages: [build-essential, libglfw3-dev, libgles2-mesa-dev, xserver-xorg-video-all]
-        stage-packages: [libglfw3, libgles2-mesa, xserver-xorg-video-all]
+        stage-packages: [libgl1-mesa-dri, libglfw3, libgles2-mesa, xserver-xorg-video-all]
