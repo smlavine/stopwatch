@@ -7,7 +7,7 @@ confinement: devmode
 icon: stopwatch.png
 grade: devel
 apps:
-    stopwatch:
+    stop-watch:
         command: stopwatch
         plugs: [opengl, x11]
 parts:
