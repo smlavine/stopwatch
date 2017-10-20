@@ -1,9 +1,10 @@
 #include <GLFW/glfw3.h>
 
 static const int WIN_W = 16, WIN_H = 16;
+static const double DOUBLE_CLICK_DURATION = 0.2;
 
 static int dragged = 0, paused = 0;
-static double grabX, grabY;
+static double grabX, grabY, lastClick = 0;
 
 static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -18,6 +19,12 @@ static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
                 } else {
                     glfwSetWindowTitle(win, "Stopwatch");
                 }
+                double currTime = glfwGetTime();
+                if (currTime - lastClick < DOUBLE_CLICK_DURATION) {
+                    paused = 0;
+                    glfwSetWindowTitle(win, "RESTARTED");
+                }
+                lastClick = currTime;
             }
         }
     } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
