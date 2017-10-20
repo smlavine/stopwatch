@@ -4,15 +4,25 @@
 #include <string.h>
 #include <stdio.h>
 
-static const int WIN_W = 16, WIN_H = 16, SCL = 2;
-static const double DOUBLE_CLICK_DURATION = 0.2;
-
 typedef struct {
     float w; // width in pixels
     size_t n; // number of points
     float *p; // points ({x,y} tuples)
 } Glyph;
 
+static const int WIN_W = 27, WIN_H = 5, SCL = 2;
+static const double DOUBLE_CLICK_DURATION = 0.2;
+static const Glyph ZERO = {3, 24, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5}};
+static const Glyph ONE = {3, 18, (float[]){1, 0, 2, 0, 2, 5, 2, 5, 1, 5, 1, 0, 0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 2, 5, 0, 5, 0, 4, 0, 4, 2, 4, 2, 5}};
+static const Glyph TWO = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 3, 1, 3, 0, 3, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 2, 2, 2, 3, 2, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph THREE = {3, 24, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph FOUR = {3, 18, (float[]){0, 2, 1, 2, 1, 5, 1, 5, 0, 5, 0, 2, 0, 2, 3, 2, 3, 3, 3, 3, 0, 3, 0, 2, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5}};
+static const Glyph FIVE = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 0, 2, 1, 2, 1, 5, 1, 5, 0, 5, 0, 2, 2, 0, 3, 0, 3, 3, 3, 3, 2, 3, 2, 0, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph SIX = {3, 36, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 0, 2, 1, 2, 1, 5, 1, 5, 0, 5, 0, 2, 2, 0, 3, 0, 3, 3, 3, 3, 2, 3, 2, 0, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph SEVEN = {3, 12, (float[]){3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5}};
+static const Glyph EIGHT = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph NINE = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 2, 1, 2, 1, 5, 1, 5, 0, 5, 0, 2, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
+static const Glyph COLON = {1, 12, (float[]){0, 1, 1, 1, 1, 2, 1, 2, 0, 2, 0, 1, 0, 3, 1, 3, 1, 4, 1, 4, 0, 4, 0, 3}};
 static int dragged = 0, paused = 0;
 static double grabX, grabY, lastClick = 0, timer = 0;
 static GLuint prg;
@@ -138,10 +148,9 @@ static void drawGlyph(float movX, float movY, Glyph glyph) {
 }
 
 static void draw(void) {
-    const Glyph triangle = {16, 3, (float []){0, 0, 8, 16, 16, 0}};
     glClear(GL_COLOR_BUFFER_BIT);
     glEnableVertexAttribArray(posLoc);
-    drawGlyph(0, 0, triangle);
+    drawGlyph(0, 0, ONE);
     glDisableVertexAttribArray(posLoc);
 }
 
