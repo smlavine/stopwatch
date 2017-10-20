@@ -10,7 +10,7 @@ typedef struct {
     float *p; // points ({x,y} tuples)
 } Glyph;
 
-static const int WIN_W = 27, WIN_H = 5, SCL = 2;
+static const int WIN_W = 29, WIN_H = 7, SCL = 2;
 static const double DOUBLE_CLICK_DURATION = 0.2;
 static const Glyph ZERO = {3, 24, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5}};
 static const Glyph ONE = {3, 18, (float[]){1, 0, 2, 0, 2, 5, 2, 5, 1, 5, 1, 0, 0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 2, 5, 0, 5, 0, 4, 0, 4, 2, 4, 2, 5}};
@@ -23,6 +23,7 @@ static const Glyph SEVEN = {3, 12, (float[]){3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5,
 static const Glyph EIGHT = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 5, 1, 5, 0, 5, 0, 0, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
 static const Glyph NINE = {3, 30, (float[]){0, 0, 3, 0, 3, 1, 3, 1, 0, 1, 0, 0, 0, 2, 1, 2, 1, 5, 1, 5, 0, 5, 0, 2, 3, 5, 0, 5, 0, 4, 0, 4, 3, 4, 3, 5, 3, 5, 2, 5, 2, 0, 2, 0, 3, 0, 3, 5, 1, 2, 2, 2, 2, 3, 2, 3, 1, 3, 1, 2}};
 static const Glyph COLON = {1, 12, (float[]){0, 1, 1, 1, 1, 2, 1, 2, 0, 2, 0, 1, 0, 3, 1, 3, 1, 4, 1, 4, 0, 4, 0, 3}};
+static const Glyph *DIGITS[] = {&ZERO, &ONE, &TWO, &THREE, &FOUR, &FIVE, &SIX, &SEVEN, &EIGHT, &NINE};
 static int dragged = 0, paused = 0;
 static double grabX, grabY, lastClick = 0, timer = 0;
 static GLuint prg;
@@ -141,6 +142,22 @@ static void exitGL(void) {
     glDeleteProgram(prg);
 }
 
+static void getDigits(int *H, int *h, int *M, int *m, int *S, int *s) {
+    long t = paused ? timer : glfwGetTime() - timer;
+    long hours = t / 3600;
+    t %= 3600;
+    *H = hours / 10;
+    *h = hours % 10;
+    long minutes = t / 60;
+    t %= 60;
+    *M = minutes / 10;
+    *m = minutes % 10;
+    long seconds = t;
+    t %= 1;
+    *S = seconds / 10;
+    *s = seconds % 10;
+}
+
 static void drawGlyph(float movX, float movY, Glyph glyph) {
     glUniform2f(movLoc, movX, movY);
     glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, glyph.p);
@@ -148,9 +165,18 @@ static void drawGlyph(float movX, float movY, Glyph glyph) {
 }
 
 static void draw(void) {
+    int H, h, M, m, S, s;
+    getDigits(&H, &h, &M, &m, &S, &s);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnableVertexAttribArray(posLoc);
-    drawGlyph(0, 0, ONE);
+    drawGlyph(1, 1, *DIGITS[H]);
+    drawGlyph(5, 1, *DIGITS[h]);
+    drawGlyph(9, 1, COLON);
+    drawGlyph(11, 1, *DIGITS[M]);
+    drawGlyph(15, 1, *DIGITS[m]);
+    drawGlyph(19, 1, COLON);
+    drawGlyph(21, 1, *DIGITS[S]);
+    drawGlyph(25, 1, *DIGITS[s]);
     glDisableVertexAttribArray(posLoc);
 }
 
