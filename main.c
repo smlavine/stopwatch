@@ -7,10 +7,16 @@
 static const int WIN_W = 16, WIN_H = 16, SCL = 2;
 static const double DOUBLE_CLICK_DURATION = 0.2;
 
+typedef struct {
+    float w; // width in pixels
+    size_t n; // number of points
+    float *p; // points ({x,y} tuples)
+} Glyph;
+
 static int dragged = 0, paused = 0;
 static double grabX, grabY, lastClick = 0, timer = 0;
 static GLuint prg;
-static GLint movLoc;
+static GLint posLoc, movLoc;
 
 static void setIcon(GLFWwindow *win) {
     GLFWimage image = {16, 16, (unsigned char[]) {
@@ -114,8 +120,9 @@ static void initGL(void) {
     glDeleteShader(frag);
     glDeleteShader(vert);
     glUseProgram(prg);
-    movLoc = glGetAttribLocation(prg, "mov");
-    glUniform2f(glGetAttribLocation(prg, "size"), WIN_W, WIN_H);
+    posLoc = glGetAttribLocation(prg, "pos");
+    movLoc = glGetUniformLocation(prg, "mov");
+    glUniform2f(glGetUniformLocation(prg, "size"), WIN_W, WIN_H);
     glViewport(0, 0, WIN_W * SCL, WIN_H * SCL);
     glClearColor(0, 0, 1, 1);
 }
@@ -124,8 +131,18 @@ static void exitGL(void) {
     glDeleteProgram(prg);
 }
 
+static void drawGlyph(float movX, float movY, Glyph glyph) {
+    glUniform2f(movLoc, movX, movY);
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, glyph.p);
+    glDrawArrays(GL_TRIANGLES, 0, glyph.n);
+}
+
 static void draw(void) {
+    const Glyph triangle = {16, 3, (float []){0, 0, 8, 16, 16, 0}};
     glClear(GL_COLOR_BUFFER_BIT);
+    glEnableVertexAttribArray(posLoc);
+    drawGlyph(0, 0, triangle);
+    glDisableVertexAttribArray(posLoc);
 }
 
 int main(void) {
@@ -135,7 +152,7 @@ int main(void) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_DECORATED, 0);
     glfwWindowHint(GLFW_RESIZABLE, 0);
-    GLFWwindow *win = glfwCreateWindow(WIN_W, WIN_H, "Stopwatch", NULL, NULL);
+    GLFWwindow *win = glfwCreateWindow(WIN_W * SCL, WIN_H * SCL, "Stopwatch", NULL, NULL);
     glfwMakeContextCurrent(win);
     setIcon(win);
     glfwGetCursorPos(win, &grabX, &grabY);
