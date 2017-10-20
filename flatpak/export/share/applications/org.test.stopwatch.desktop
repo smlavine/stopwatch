@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=Stopwatch
-GenericName=Stopwatch
-Exec=stopwatch
-Icon=org.test.stopwatch
-Terminal=false
-Categories=Utility;

@@ -1,8 +1,0 @@
-[Application]
-name=org.test.stopwatch
-runtime=org.freedesktop.Platform/x86_64/1.6
-sdk=org.freedesktop.Sdk/x86_64/1.6
-command=stopwatch
-[Context]
-sockets=x11;
-devices=dri;

@@ -1,6 +1,0 @@
-Make a snap
-Add icon programmatically
-Press/Release without moving mouse to pause/unpause
-Double click to restart
-Logging if some file is present (when started; paused; restarted; duration...) on exit
-Code refactoring

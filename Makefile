@@ -1,5 +1,23 @@
+.PHONY: all clean install uninstall
+
+CC=gcc
+CFLAGS=-O2
+LDFLAGS=-s
+LDLIBS=-lglfw -lGLESv2
+
+SRC=main.c
+DST=stopwatch
+
+BINDIR=/usr/bin
+
 all:
-	gcc -o stopwatch -O2 main.c -lGLESv2 -lglfw
+	$(CC) $(CFLAGS) -o $(DST) $(LDFLAGS) $(SRC) $(LDLIBS)
+
+clean:
+	rm -f $(DST)
 
 install:
-	cp stopwatch $(DESTDIR)/stopwatch
+	cp $(DST) $(BINDIR)/$(DST)
+
+uninstall:
+	rm -f $(BINDIR)/$(DST)
