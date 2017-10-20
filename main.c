@@ -1,10 +1,13 @@
 #include <GLFW/glfw3.h>
 
+#include <stdio.h>
+
 static const int WIN_W = 16, WIN_H = 16;
 static const double DOUBLE_CLICK_DURATION = 0.2;
 
 static int dragged = 0, paused = 0;
 static double grabX, grabY, lastClick = 0;
+static double timer = 0; // When running, shows start time, when paused, shows accumulated time
 
 static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -15,14 +18,17 @@ static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
             if (!dragged) {
                 paused = !paused;
                 if (paused) {
+                    timer = glfwGetTime() - timer;
                     glfwSetWindowTitle(win, "[Paused]");
                 } else {
-                    glfwSetWindowTitle(win, "Stopwatch");
+                    timer = glfwGetTime() - timer;
+                    glfwSetWindowTitle(win, "[Unpaused]");
                 }
                 double currTime = glfwGetTime();
                 if (currTime - lastClick < DOUBLE_CLICK_DURATION) {
                     paused = 0;
-                    glfwSetWindowTitle(win, "RESTARTED");
+                    timer = glfwGetTime();
+                    glfwSetWindowTitle(win, "[Restarted]");
                 }
                 lastClick = currTime;
             }
@@ -52,6 +58,7 @@ int main(void) {
     glfwSetCursorPosCallback(win, cursorPosCallback);
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEventsTimeout(1);
+        printf("%f\n", paused ? timer : glfwGetTime() - timer);
         glfwSwapBuffers(win);
     }
     glfwDestroyWindow(win);
