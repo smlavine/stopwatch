@@ -73,11 +73,7 @@ static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
         } else if (action == GLFW_RELEASE) {
             if (!dragged) {
                 paused = !paused;
-                if (paused) {
-                    timer = glfwGetTime() - timer;
-                } else {
-                    timer = glfwGetTime() - timer;
-                }
+                timer = glfwGetTime() - timer;
                 double currTime = glfwGetTime();
                 if (currTime - lastClick < DOUBLE_CLICK_DURATION) {
                     paused = 0;
@@ -93,12 +89,14 @@ static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
     }
 }
 
-static void cursorPosCallback(GLFWwindow *win, double x, double y) {
+static void moveWindow(GLFWwindow *win) {
     if (!glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT)) return;
     dragged = 1;
     int wx, wy;
+    double cx, cy;
+    glfwGetCursorPos(win, &cx, &cy);
     glfwGetWindowPos(win, &wx, &wy);
-    glfwSetWindowPos(win, wx + x - grabX, wy + y - grabY);
+    glfwSetWindowPos(win, wx + cx - grabX, wy + cy - grabY);
 }
 
 static void initGL(void) {
@@ -192,10 +190,10 @@ int main(void) {
     setIcon(win);
     glfwGetCursorPos(win, &grabX, &grabY);
     glfwSetMouseButtonCallback(win, mouseButtonCallback);
-    glfwSetCursorPosCallback(win, cursorPosCallback);
     initGL();
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEventsTimeout(1);
+        moveWindow(win);
         setTitle(win);
         draw();
         glfwSwapBuffers(win);
