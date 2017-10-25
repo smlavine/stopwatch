@@ -1,4 +1,4 @@
-# stopwatch
+# stopwatch ![icon](stopwatch.png)
 
 ![Screenshot](screenshot.png)
 
