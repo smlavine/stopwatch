@@ -10,7 +10,7 @@ Controls:
 
 Install a flatpak bundle (EASIEST method):
     
-    curl -o ~/Downloads/stopwatch.flatpak https://github.com/Mark-Weston/stopwatch/releases/download/v1.0/stopwatch.flatpak
+    curl -L -o ~/Downloads/stopwatch.flatpak https://github.com/Mark-Weston/stopwatch/releases/download/v1.0/stopwatch.flatpak
     flatpak install --bundle ~/Downloads/stopwatch.flatpak
 
 
