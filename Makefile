@@ -6,18 +6,25 @@ LDFLAGS=-s
 LDLIBS=-lglfw -lGLESv2
 
 SRC=main.c
-DST=stopwatch
+ICON=stopwatch.png
+DESKTOP=stopwatch.desktop
+BIN=stopwatch
 
-BINDIR=/usr/bin
+BINDST=/usr/bin/stopwatch
+ICONDST=/usr/share/icons/hicolor/16x16/apps/stopwatch.png \
+        /usr/share/pixmaps/stopwatch.png
+DESKTOPDST=/usr/share/applications/stopwatch.desktop
 
 all:
-	$(CC) $(CFLAGS) -o $(DST) $(LDFLAGS) $(SRC) $(LDLIBS)
+	$(CC) $(CFLAGS) -o $(BIN) $(LDFLAGS) $(SRC) $(LDLIBS)
 
 clean:
-	rm -f $(DST)
+	rm -f $(BIN)
 
 install:
-	cp $(DST) $(BINDIR)/$(DST)
+	for i in $(BINDST); do cp $(BIN) $$i; done
+	for i in $(ICONDST); do cp $(ICON) $$i; done
+	for i in $(DESKTOPDST); do cp $(DESKTOP) $$i; done
 
 uninstall:
-	rm -f $(BINDIR)/$(DST)
+	rm -f $(BINDST) $(ICONDST) $(DESKTOPDST)
