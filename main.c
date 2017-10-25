@@ -89,9 +89,12 @@ static void mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
     }
 }
 
+static void cursorPosCallback(GLFWwindow *win, double x, double y) {
+    dragged = 1;
+}
+
 static void moveWindow(GLFWwindow *win) {
     if (!glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT)) return;
-    dragged = 1;
     int wx, wy;
     double cx, cy;
     glfwGetCursorPos(win, &cx, &cy);
@@ -133,7 +136,7 @@ static void initGL(void) {
     movLoc = glGetUniformLocation(prg, "mov");
     glUniform2f(glGetUniformLocation(prg, "size"), WIN_W, WIN_H);
     glViewport(0, 0, WIN_W * SCL, WIN_H * SCL);
-    glClearColor(0, 0, 1, 1);
+    glClearColor(0, 0, 0, 1);
 }
 
 static void exitGL(void) {
@@ -190,6 +193,7 @@ int main(void) {
     setIcon(win);
     glfwGetCursorPos(win, &grabX, &grabY);
     glfwSetMouseButtonCallback(win, mouseButtonCallback);
+    glfwSetCursorPosCallback(win, cursorPosCallback);
     initGL();
     while (!glfwWindowShouldClose(win)) {
         glfwWaitEventsTimeout(1);
