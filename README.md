@@ -8,6 +8,12 @@ Controls:
 * Double-click to restart
 * Right-click to close
 
+Install a flatpak bundle (EASIEST method):
+    
+    curl -o ~/Downloads/stopwatch.flatpak https://github.com/Mark-Weston/stopwatch/releases/download/v1.0/stopwatch.flatpak
+    flatpak install --bundle ~/Downloads/stopwatch.flatpak
+
+
 Install from source:
 * Install dependencies (libc, glfw >=3.2, GLESv2) and build dependencies
   
