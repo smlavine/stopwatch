@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
                     i = argc; /* end of arguments */
                     break;
                 case 'h':
+				default:
                     puts("usage: stopwatch [-tch]\n"
                          "Options:\n"
                          "-h  Prints this help message.\n"
