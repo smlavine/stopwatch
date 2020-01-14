@@ -13,6 +13,18 @@
 static_assert(sizeof(double) == 8, "double must have double precision");
 #define MAX_PRECISE_DOUBLE ((double)(1ULL << 52))
 
+static const char *HELP_STRING =
+"usage: stopwatch [-ch] [-t FILE]\n"
+"Options:\n"
+"-h  Prints this help message.\n"
+"-t  Prints output to FILE\n"
+"-c  If possible, clears FILE contents\n"
+"    before every write.\n"
+"Written by Mark Weston and improved by\n"
+"Sebastian LaVine. This program is Free Software,\n"
+"licensed under the ISC license. See the file\n"
+"LICENSE for details.";
+
 /**
  * Original program written by Mark Weston. Extra options added
  * by Sebastian LaVine. See LICENSE for copyright details.
@@ -41,18 +53,7 @@ int main(int argc, char *argv[]) {
                     i = argc; /* end of arguments */
                     break;
                 case 'h':
-                    puts("usage: stopwatch [-tch]\n"
-                         "Options:\n"
-                         "-h  Prints this help message.\n"
-                         "-t  Prints output to stopwatch.txt\n"
-                         "-c  When used in conjunction with -t,\n"
-                         "    stopwatch.txt will clear after each\n"
-                         "    printing, so that it contains only\n"
-                         "    the most recent time.\n"
-                         "Written by Mark Weston and improved by\n"
-                         "Sebastian LaVine. This program is Free Software,\n"
-                         "licensed under the ISC license. See the file\n"
-                         "LICENSE for details.");
+                    puts(HELP_STRING);
                     return EXIT_SUCCESS;
                     break;
                 }
