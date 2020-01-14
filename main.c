@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    if (clearfile && out == stdout)
+    if (out == stdout)
         clearfile = false;
 
     while (1) {
