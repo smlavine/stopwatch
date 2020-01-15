@@ -14,16 +14,17 @@ static_assert(sizeof(double) == 8, "double must have double precision");
 #define MAX_PRECISE_DOUBLE ((double)(1ULL << 52))
 
 static const char *HELP_STRING =
-"usage: stopwatch [-ch] [-t FILE]\n"
+"usage: stopwatch [-ch] [FILE]\n"
 "Options:\n"
-"-h  Prints this help message.\n"
-"-t  Prints output to FILE\n"
-"-c  If possible, clears FILE contents\n"
-"    before every write.\n"
+"-h    Prints this help message.\n"
+"-c    If possible, clears FILE contents\n"
+"      before every write.\n"
+"FILE: Path to output file. If not given,\n"
+"      defaults to stdout.\n"
 "Written by Mark Weston and improved by\n"
 "Sebastian LaVine. This program is Free Software,\n"
 "licensed under the ISC license. See the file\n"
-"LICENSE for details.";
+"LICENSE for details.\n";
 
 /**
  * Original program written by Mark Weston. Extra options added
@@ -35,34 +36,35 @@ int main(int argc, char *argv[]) {
 
     /* File output added by Sebastian LaVine <seblavine@outlook.com> */
     FILE *out = stdout;
+	char *filename = NULL;
     bool clearfile = false;
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
             for (int j = 1; j < strlen(argv[i]); j++) {
                 switch (argv[i][j]) {
-                case 't':
-                    if ((out = fopen("stopwatch.txt", "w")) == NULL) {
-                        fputs("Error opening log file\n", stderr);
-                        return EXIT_FAILURE;
-                    }
-                    break;
                 case 'c':
                     clearfile = true;
+                    break;
+                case 'h':
+                    fputs(HELP_STRING, stdout);
+                    return EXIT_SUCCESS;
                     break;
                 case '-':
                     i = argc; /* end of arguments */
                     break;
-                case 'h':
-                    puts(HELP_STRING);
-                    return EXIT_SUCCESS;
-                    break;
                 }
             }
-        }
+        } else { /* Not an option; FILE argument */
+			if (filename != NULL) { /* If another FILE was given earlier, */
+				fclose(out);		/* close file before opening another. */
+			}
+			filename = argv[i];
+			if ((out = fopen(filename, "w")) == NULL) {
+				fputs("Error opening log file\n", stderr);
+				return EXIT_FAILURE;
+			}
+		}
     }
-    
-    if (out == stdout)
-        clearfile = false;
 
     while (1) {
         time_t now = time(NULL);
