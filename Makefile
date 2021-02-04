@@ -1,6 +1,6 @@
 .PHONY: all clean install uninstall
 
-CC=gcc
+CC=cc
 CFLAGS=-O2
 LDFLAGS=-s
 LDLIBS=-lm
