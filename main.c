@@ -26,10 +26,6 @@ static const char *HELP_STRING =
 "licensed under the ISC license. See the file\n"
 "LICENSE for details.\n";
 
-/**
- * Original program written by Mark Weston. Extra options added
- * by Sebastian LaVine. See LICENSE for copyright details.
- */
 int main(int argc, char *argv[]) {
     time_t start = time(NULL);
     if (start == (time_t)-1) return EXIT_FAILURE;
