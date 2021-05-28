@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
     time_t start = time(NULL);
     if (start == (time_t)-1) return EXIT_FAILURE;
 
-    /* File output added by Sebastian LaVine <seblavine@outlook.com> */
     FILE *out = stdout;
 	char *filename = NULL;
     bool clearfile = false;
