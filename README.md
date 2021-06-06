@@ -1,2 +1,2 @@
 # stopwatch
-Minimal CLI stopwatch program.
+A minimal CLI stopwatch program.
