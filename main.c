@@ -25,29 +25,29 @@ static const char *HELP_STRING =
 "LICENSE for details.\n";
 
 int main(int argc, char *argv[]) {
-    time_t start = time(NULL);
-    if (start == (time_t)-1) return EXIT_FAILURE;
+	time_t start = time(NULL);
+	if (start == (time_t)-1) return EXIT_FAILURE;
 
-    FILE *out = stdout;
+	FILE *out = stdout;
 	char *filename = NULL;
-    bool clearfile = false;
-    for (int i = 1; i < argc; i++) {
-        if (argv[i][0] == '-') {
-            for (int j = 1; j < strlen(argv[i]); j++) {
-                switch (argv[i][j]) {
-                case 'c':
-                    clearfile = true;
-                    break;
-                case 'h':
-                    fputs(HELP_STRING, stdout);
-                    return EXIT_SUCCESS;
-                    break;
-                case '-':
-                    i = argc; /* end of arguments */
-                    break;
-                }
-            }
-        } else { /* Not an option; FILE argument */
+	bool clearfile = false;
+	for (int i = 1; i < argc; i++) {
+		if (argv[i][0] == '-') {
+			for (int j = 1; j < strlen(argv[i]); j++) {
+				switch (argv[i][j]) {
+				case 'c':
+					clearfile = true;
+					break;
+				case 'h':
+					fputs(HELP_STRING, stdout);
+					return EXIT_SUCCESS;
+					break;
+				case '-':
+					i = argc; /* end of arguments */
+					break;
+				}
+			}
+		} else { /* Not an option; FILE argument */
 			if (filename != NULL) { /* If another FILE was given earlier, */
 				fclose(out);		/* close file before opening another. */
 			}
@@ -57,30 +57,30 @@ int main(int argc, char *argv[]) {
 				return EXIT_FAILURE;
 			}
 		}
-    }
+	}
 
-    while (1) {
-        time_t now = time(NULL);
-        if (now == (time_t)-1) return EXIT_FAILURE;
+	while (1) {
+		time_t now = time(NULL);
+		if (now == (time_t)-1) return EXIT_FAILURE;
 
-        double diff = difftime(now, start);
-        if (isnan(diff) || diff < 0) return EXIT_FAILURE;
-        if (diff > MAX_PRECISE_DOUBLE) return EXIT_FAILURE;
+		double diff = difftime(now, start);
+		if (isnan(diff) || diff < 0) return EXIT_FAILURE;
+		if (diff > MAX_PRECISE_DOUBLE) return EXIT_FAILURE;
 
-        unsigned long long seconds = diff;
-        unsigned long long h = seconds / 3600;
-        seconds %= 3600;
-        unsigned long long m = seconds / 60;
-        seconds %= 60;
-        unsigned long long s = seconds;
-        
-        if (clearfile) {
-            fclose(out);
-            out = fopen("stopwatch.txt", "w");
-        }
-        (void)fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
-        (void)fflush(out);
+		unsigned long long seconds = diff;
+		unsigned long long h = seconds / 3600;
+		seconds %= 3600;
+		unsigned long long m = seconds / 60;
+		seconds %= 60;
+		unsigned long long s = seconds;
 
-        (void)sleep(1);
-    }
+		if (clearfile) {
+			fclose(out);
+			out = fopen("stopwatch.txt", "w");
+		}
+		(void)fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
+		(void)fflush(out);
+
+		(void)sleep(1);
+	}
 }
