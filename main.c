@@ -81,9 +81,10 @@ main(int argc, char *argv[])
 			fclose(out);
 			out = fopen("stopwatch.txt", "w");
 		}
-		(void)fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
-		(void)fflush(out);
 
-		(void)sleep(1);
+		fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
+		fflush(out);
+
+		sleep(1);
 	}
 }
