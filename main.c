@@ -28,11 +28,12 @@ int
 main(int argc, char *argv[])
 {
 	time_t start = time(NULL);
-	if (start == (time_t)-1) return EXIT_FAILURE;
-
 	FILE *out = stdout;
 	char *filename = NULL;
 	bool clearfile = false;
+
+	if (start == (time_t)-1) return EXIT_FAILURE;
+
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
 			for (int j = 1; j < strlen(argv[i]); j++) {
