@@ -27,12 +27,13 @@ static const char *HELP_STRING =
 int
 main(int argc, char *argv[])
 {
-	time_t start = time(NULL);
+	time_t start;
 	FILE *out = stdout;
 	char *filename = NULL;
 	bool clearfile = false;
 
-	if (start == (time_t)-1) return EXIT_FAILURE;
+	if ((start = time(NULL)) == (time_t)-1)
+		return EXIT_FAILURE;
 
 	for (int i = 1; i < argc; i++) {
 		if (argv[i][0] == '-') {
@@ -63,8 +64,9 @@ main(int argc, char *argv[])
 	}
 
 	for (;;) {
-		time_t now = time(NULL);
-		if (now == (time_t)-1) return EXIT_FAILURE;
+		time_t now;
+		if ((now = time(NULL)) == (time_t)-1)
+			return EXIT_FAILURE;
 
 		double diff = difftime(now, start);
 		if (isnan(diff) || diff < 0) return EXIT_FAILURE;
