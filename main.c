@@ -61,7 +61,7 @@ main(int argc, char *argv[])
 		}
 	}
 
-	while (1) {
+	for (;;) {
 		time_t now = time(NULL);
 		if (now == (time_t)-1) return EXIT_FAILURE;
 
