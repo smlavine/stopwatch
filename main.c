@@ -24,7 +24,9 @@ static const char *HELP_STRING =
 "licensed under the ISC license. See the file\n"
 "LICENSE for details.\n";
 
-int main(int argc, char *argv[]) {
+int
+main(int argc, char *argv[])
+{
 	time_t start = time(NULL);
 	if (start == (time_t)-1) return EXIT_FAILURE;
 
