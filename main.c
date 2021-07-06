@@ -1,11 +1,11 @@
-#include <unistd.h> // sleep()
-#include <tgmath.h>
 #include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <tgmath.h>
+#include <time.h>
+#include <unistd.h>
 
 #ifndef __STDC_IEC_559__
 #error "unsupported double"
