@@ -30,10 +30,13 @@ static const char *HELP_STRING =
 int
 main(int argc, char *argv[])
 {
-	time_t start;
+	int opt;
+	bool clearfile = false;
 	FILE *out = stdout;
 	char *filename = NULL;
-	bool clearfile = false;
+	time_t start, now;
+	double diff;
+	unsigned long long seconds, h, m, s;
 
 	if ((start = time(NULL)) == (time_t)-1)
 		return EXIT_FAILURE;
@@ -74,20 +77,19 @@ main(int argc, char *argv[])
 	}
 
 	for (;;) {
-		time_t now;
 		if ((now = time(NULL)) == (time_t)-1)
 			return EXIT_FAILURE;
 
-		double diff = difftime(now, start);
+		diff = difftime(now, start);
 		if (isnan(diff) || diff < 0) return EXIT_FAILURE;
 		if (diff > MAX_PRECISE_DOUBLE) return EXIT_FAILURE;
 
-		unsigned long long seconds = diff;
-		unsigned long long h = seconds / 3600;
+		seconds = diff;
+		h = seconds / 3600;
 		seconds %= 3600;
-		unsigned long long m = seconds / 60;
+		m = seconds / 60;
 		seconds %= 60;
-		unsigned long long s = seconds;
+		s = seconds;
 
 		if (clearfile) {
 			fclose(out);
