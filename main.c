@@ -104,7 +104,12 @@ main(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 
-		fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
+		if (fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s) < 0) {
+			fprintf(stderr, "Error writing to '%s': %s\n",
+					filename, strerror(errno));
+			return EXIT_FAILURE;
+		}
+
 		fflush(out);
 
 		sleep(1);
