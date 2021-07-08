@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,8 +14,10 @@
 static_assert(sizeof(double) == 8, "double must have double precision");
 #define MAX_PRECISE_DOUBLE ((double)(1ULL << 52))
 
+#define OPTSTRING "ch"
+
 static const char *HELP_STRING =
-"usage: stopwatch [-ch] [FILE]\n"
+"usage: stopwatch [-" OPTSTRING "] [FILE]\n"
 "Options:\n"
 "-h    Prints this help message.\n"
 "-c    If possible, clears FILE contents before every write.\n"
@@ -35,32 +38,39 @@ main(int argc, char *argv[])
 	if ((start = time(NULL)) == (time_t)-1)
 		return EXIT_FAILURE;
 
-	for (int i = 1; i < argc; i++) {
-		if (argv[i][0] == '-') {
-			for (int j = 1; j < strlen(argv[i]); j++) {
-				switch (argv[i][j]) {
-				case 'c':
-					clearfile = true;
-					break;
-				case 'h':
-					fputs(HELP_STRING, stdout);
-					return EXIT_SUCCESS;
-					break;
-				case '-':
-					i = argc; /* end of arguments */
-					break;
-				}
-			}
-		} else { /* Not an option; FILE argument */
-			if (filename != NULL) { /* If another FILE was given earlier, */
-				fclose(out);		/* close file before opening another. */
-			}
-			filename = argv[i];
-			if ((out = fopen(filename, "w")) == NULL) {
-				fputs("Error opening log file\n", stderr);
-				return EXIT_FAILURE;
-			}
+	while ((opt = getopt(argc, argv, OPTSTRING)) != -1) {
+		switch (opt) {
+		case 'c':
+			clearfile = true;
+			break;
+		case 'h':
+			fputs(HELP_STRING, stdout);
+			return EXIT_SUCCESS;
+			break;
+		case ':':
+		case '?':
+			fputs(HELP_STRING, stdout);
+			return EXIT_FAILURE;
+			break;
 		}
+	}
+	argv += optind;
+	argc -= optind;
+
+	switch (argc) {
+	case 0:
+		break;
+	case 1:
+		if ((out = fopen(argv[0], "w")) == NULL) {
+			fprintf(stderr, "Error opening '%s': %s\n",
+					argv[0], strerror(errno));
+			return EXIT_FAILURE;
+		}
+		break;
+	default:
+		fputs(HELP_STRING, stdout);
+		return EXIT_FAILURE;
+		break;
 	}
 
 	for (;;) {
