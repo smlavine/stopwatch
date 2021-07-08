@@ -61,9 +61,10 @@ main(int argc, char *argv[])
 	case 0:
 		break;
 	case 1:
-		if ((out = fopen(argv[0], "w")) == NULL) {
+		filename = argv[0];
+		if ((out = fopen(filename, "w")) == NULL) {
 			fprintf(stderr, "Error opening '%s': %s\n",
-					argv[0], strerror(errno));
+					filename, strerror(errno));
 			return EXIT_FAILURE;
 		}
 		break;
@@ -72,6 +73,12 @@ main(int argc, char *argv[])
 		return EXIT_FAILURE;
 		break;
 	}
+
+	/* Set filename if there was no FILE argument. In case of an error,
+	 * it will be printed, and NULL can't be printed.
+	 */
+	if (filename == NULL)
+		filename = "/dev/stdout";
 
 	if ((start = time(NULL)) == (time_t)-1)
 		return EXIT_FAILURE;
@@ -93,7 +100,7 @@ main(int argc, char *argv[])
 
 		if (clearfile && (out = freopen(filename, "w", out)) == NULL) {
 			fprintf(stderr, "Error reopening '%s': %s\n",
-					argv[0], strerror(errno));
+					filename, strerror(errno));
 			return EXIT_FAILURE;
 		}
 
