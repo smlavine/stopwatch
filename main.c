@@ -81,8 +81,8 @@ main(int argc, char *argv[])
 			return EXIT_FAILURE;
 
 		diff = difftime(now, start);
-		if (isnan(diff) || diff < 0) return EXIT_FAILURE;
-		if (diff > MAX_PRECISE_DOUBLE) return EXIT_FAILURE;
+		if (isnan(diff) || diff < 0 || MAX_PRECISE_DOUBLE < diff)
+			return EXIT_FAILURE;
 
 		seconds = diff;
 		h = seconds / 3600;
