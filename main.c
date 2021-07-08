@@ -91,9 +91,10 @@ main(int argc, char *argv[])
 		seconds %= 60;
 		s = seconds;
 
-		if (clearfile) {
-			fclose(out);
-			out = fopen("stopwatch.txt", "w");
+		if (clearfile && (out = freopen(filename, "w", out)) == NULL) {
+			fprintf(stderr, "Error reopening '%s': %s\n",
+					argv[0], strerror(errno));
+			return EXIT_FAILURE;
 		}
 
 		fprintf(out, "\r%02llu:%02llu:%02llu", h, m, s);
