@@ -38,9 +38,6 @@ main(int argc, char *argv[])
 	double diff;
 	unsigned long long seconds, h, m, s;
 
-	if ((start = time(NULL)) == (time_t)-1)
-		return EXIT_FAILURE;
-
 	while ((opt = getopt(argc, argv, OPTSTRING)) != -1) {
 		switch (opt) {
 		case 'c':
@@ -75,6 +72,9 @@ main(int argc, char *argv[])
 		return EXIT_FAILURE;
 		break;
 	}
+
+	if ((start = time(NULL)) == (time_t)-1)
+		return EXIT_FAILURE;
 
 	for (;;) {
 		if ((now = time(NULL)) == (time_t)-1)
